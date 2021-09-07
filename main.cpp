@@ -1,5 +1,7 @@
 #include <iostream>
 
+class T;
+
 class Complex
 {
 public:
@@ -41,17 +43,17 @@ public:
     // Overload !=
     bool operator != (const Complex &other)
     {
-        return !((EPSILON < (this->re - other.re) < EPSILON) && (EPSILON < (this->im - other.im) < EPSILON));
+        return !(*this == other);
     }
     // Overload >=
     bool operator >= (const Complex &other)
     {
-        return (EPSILON < (this->re - other.re) < EPSILON) && (EPSILON < (this->im - other.im) < EPSILON) || (this->re * this->re + this->im * this->im) > ((other.re * other.re) + (other.im * other.im));
+        return (*this==other)  || (this->re * this->re + this->im * this->im) > ((other.re * other.re) + (other.im * other.im));
     }
     // Overload <=
     bool operator <= (const Complex &other)
     {
-        return (EPSILON < (this->re - other.re) < EPSILON) && (EPSILON < (this->im - other.im) < EPSILON) || (this->re * this->re + this->im * this->im) < ((other.re * other.re) + (other.im * other.im));
+        return !(*this >= other);
     }
     // Overload >
     bool operator > (const Complex &other)
@@ -61,174 +63,184 @@ public:
     // Overload <
     bool operator < (const Complex &other)
     {
-        return (this->re * this->re + this->im * this->im) < ((other.re * other.re) + (other.im * other.im));
+        return !(*this>other);
     }
 
     // Overload ++ and --
     Complex & operator ++ ()
     {
-        ++re;
-        ++im;
+        return *this += 1.0;
     }
-    Complex & operator ++ (int)
+    Complex operator ++ (int)
     {
         Complex temp = *this;
-        ++re;
-        ++im;
+        *this += 1.0;
         return temp;
     }
     Complex & operator -- ()
     {
-        --re;
-        --im;
+        return *this -= 1.0;
     }
-    Complex & operator -- (int)
+    Complex operator -- (int)
     {
         Complex temp = *this;
-        --re;
-        --im;
+        *this -= 1.0;
         return temp;
     }
 
     // Overload += -= *= /=
-    Complex & operator += (const Complex &b)
+    Complex & operator += (const Complex &other)
     {
-        re += b.re;
-        im += b.im;
+        re += other.re;
+        im += other.im;
         return *this;
     }
-    Complex & operator -= (const Complex &b)
+    Complex & operator -= (const Complex &other)
     {
-        re -= b.re;
-        im -= b.im;
+        re -= other.re;
+        im -= other.im;
         return *this;
     }
-    Complex & operator *= (const Complex &b)
+    Complex & operator *= (const Complex &other)
     {
-        re *= b.re;
-        im *= b.im;
+        re *= other.re;
+        im *= other.im;
         return *this;
     }
-    Complex & operator /= (const Complex &b)
+    Complex & operator /= (const Complex &other)
     {
-        re /= b.re;
-        im /= b.im;
+        re /= other.re;
+        im /= other.im;
         return *this;
+    }
+
+    // Overload += -= *= /= with another numbers
+    template<typename T>
+    Complex & operator += (const T b)
+    {
+        re += b;
+        return *this;
+    }
+    template<typename T>
+    Complex & operator -= (const T b)
+    {
+        re -= b;
+        return *this;
+    }
+    template<typename T>
+    Complex & operator *= (const T b)
+    {
+        re *= b;
+        return *this;
+    }
+    template<typename T>
+    Complex & operator /= (const T b)
+    {
+        re *= b;
+        return *this;
+    }
+
+    // Overload + - * /
+    Complex operator + (const Complex &other)
+    {
+        Complex temp;
+        temp+=other;
+        return temp;
+    }
+    Complex operator - (const Complex &other)
+    {
+        Complex temp;
+        temp-=other;
+        return temp;
+    }
+    Complex operator * (const Complex &other)
+    {
+        Complex temp;
+        temp*=other;
+        return temp;
+    }
+    Complex operator / (const Complex &other)
+    {
+        Complex temp;
+        temp/=other;
+        return temp;
+    }
+
+    // Overload + - * / with another numbers
+    template<typename T>
+    Complex operator + (const T b)
+    {
+        Complex temp;
+        temp+=b;
+        return temp;
+    }
+    template<typename T>
+    Complex operator - (const T b)
+    {
+        Complex temp;
+        temp-=b;
+        return temp;
+    }
+    template<typename T>
+    Complex operator * (const T b)
+    {
+        Complex temp;
+        temp*=b;
+        return temp;
+    }
+    template<typename T>
+    Complex operator / (const T b)
+    {
+        Complex temp;
+        temp/=b;
+        return temp;
+    }
+
+    Complex operator - ()
+    {
+        Complex temp;
+        temp.re = -re;
+        temp.im = -im;
+        return temp;
     }
 
     void Print(); // Just print the number
 
 };
-// Overload +=
-Complex operator += (Complex &a, const double b)
-{
-    a.re += b;
-    return a;
-}
 //Overload +
-Complex operator + (const Complex &a, const Complex &b)
-{
-    Complex temp;
-    temp.re = a.re + b.re;
-    temp.im = a.im + b.im;
-    return temp;
-}
-Complex operator + (const double a, const Complex &b)
+template<typename T>
+Complex operator + (const T a, const Complex &b)
 {
     Complex temp;
     temp.re = b.re + a;
     temp.im = b.im;
     return temp;
 }
-Complex operator + (const Complex &a, const double b)
-{
-    Complex temp;
-    temp.re = a.re + b;
-    temp.im = a.im;
-    return temp;
-}
-//Overload -=
-Complex operator -= (Complex &a, const double b)
-{
-    a.re += b;
-    return a;
-}
 //Overload -
-Complex operator - (const Complex &a, const Complex &b)
-{
-    Complex temp;
-    temp.re = a.re - b.re;
-    temp.im = a.im - b.im;
-    return temp;
-}
-Complex operator - (const double a, const Complex &b)
+template<typename T>
+Complex operator - (const T a, const Complex &b)
 {
     Complex temp;
     temp.re = b.re - a;
     temp.im = b.im;
     return temp;
 }
-Complex operator - (const Complex &a, const double b)
-{
-    Complex temp;
-    temp.re = a.re - b;
-    temp.im = a.im;
-    return temp;
-}
-//Overload *=
-Complex operator *= (Complex &a, const double b)
-{
-    a.re *= b;
-    return a;
-}
 //Overload *
-Complex operator * (const Complex &a, const Complex &b)
-{
-    Complex temp;
-    temp.re = a.re * b.re;
-    temp.im = a.im * b.im;
-    return temp;
-}
-Complex operator * (const double a, const Complex &b)
+template<typename T>
+Complex operator * (const T a, const Complex &b)
 {
     Complex temp;
     temp.re = b.re * a;
     temp.im = b.im * a;
     return temp;
 }
-Complex operator * (const Complex &a, const double b)
-{
-    Complex temp;
-    temp.re = a.re * b;
-    temp.im = a.im * b;
-    return temp;
-}
-//Overload /=
-Complex operator /= ( Complex &a, const double b)
-{
-    a.re /= b;
-    return a;
-}
 //Overload /
-Complex operator / (const Complex &a, const Complex &b)
-{
-    Complex temp;
-    temp.re = a.re / b.re;
-    temp.im = a.im / b.im;
-    return temp;
-}
-Complex operator / (const double a, const Complex &b)
+template<typename T>
+Complex operator / (const T a, const Complex &b)
 {
     Complex temp;
     temp.re = b.re / a;
     temp.im = b.im / a;
-    return temp;
-}
-Complex operator / (const Complex &a, const double b)
-{
-    Complex temp;
-    temp.re = a.re / b;
-    temp.im = a.im / b;
     return temp;
 }
 
@@ -377,6 +389,12 @@ void Arithmetic (Complex &a, Complex &b, Complex &c)
     PrintABC(a,b,c);
     result = a / 2;
     std::cout << " a / 2; = ";
+    result.Print();
+
+//Overload - un test
+    PrintABC(a,b,c);
+    result = -a;
+    std::cout << " -a; = ";
     result.Print();
 }
 
