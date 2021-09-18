@@ -4,10 +4,26 @@ class T;
 
 class Complex
 {
-public:
-    double EPSILON = 0.00000001; // This is magic! (for double)
+    friend std::ostream& operator << (std::ostream& os, const Complex a);
+    friend std::istream& operator >> (std::istream& in, Complex &a);
+    template<typename T>
+    friend Complex operator + (const T a, const Complex &b);
+    template<typename T>
+    friend Complex operator - (const T a, const Complex &b);
+    template<typename T>
+    friend Complex operator * (const T a, const Complex &b);
+    template<typename T>
+    friend Complex operator / (const T a, const Complex &b);
+
+
+
+private:
+    const double EPSILON = 0.00000001; // This is magic! (for double)
     double re;
     double im;
+    double ZERO = 0;
+
+public:
 //Constructors
     Complex()
     {
@@ -204,9 +220,35 @@ public:
         return temp;
     }
 
+    double& operator [] (int index){
+        if (index == 0) return re;
+        if (index == 1) return  im;
+        else {
+            std::cout << "Incorrect value!" << std::endl;
+        }
+        return ZERO;
+    }
+
+
+
+
     void Print(); // Just print the number
 
 };
+
+std::ostream& operator << (std::ostream& os, const Complex a){
+    os << "Complex number: " << a.re << " + i" << a.im << std::endl;
+}
+std::istream& operator >> (std::istream& in, Complex &a)
+{
+    std::cout << "Enter real value : ";
+    in >> a.re;
+    std::cout << std::endl << "Enter imagine value : ";
+    in >> a.im;
+    std::cout << std::endl;
+    return in;
+}
+
 //Overload +
 template<typename T>
 Complex operator + (const T a, const Complex &b)
@@ -243,7 +285,6 @@ Complex operator / (const T a, const Complex &b)
     temp.im = b.im / a;
     return temp;
 }
-
 
 void Complex::Print()
 {
@@ -398,12 +439,12 @@ void Arithmetic (Complex &a, Complex &b, Complex &c)
     result.Print();
 }
 
-
 int main()
 {
     Complex a;
     Complex b (15.4,12.3);
     Complex c ;
+   /*
 //Print a b c;
     a.Print();
     b.Print();
@@ -431,13 +472,8 @@ int main()
 // Print results;
     a.Print();
     b.Print();
-    c.Print();
-
-
-
-
-
-
-
-
+    c.Print();*/
+   std::cout << b;
+   std::cin >> a;
+   std::cout << a;
 }
