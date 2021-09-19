@@ -22,23 +22,31 @@ private:
     double re;
     double im;
     double ZERO = 0;
+    static int countNumbers; // This variable keeps count of numbers
 
 public:
+    static void ShowCountNumbers()
+    {
+        std::cout << "There was made : " << countNumbers << " numbers." << std::endl;
+    }
 //Constructors
     Complex()
     {
         this->re = 0;
         this->im = 0;
+        ++countNumbers;
     }
     Complex(double valueRe, double valueIm)
     {
         this->re = valueRe;
         this->im = valueIm;
+        ++countNumbers;
     }
     Complex(const Complex &other)
     {
         this->re = other.re;
         this->im = other.im;
+        ++countNumbers;
     }
 //Destructor
     ~Complex(){};
@@ -232,13 +240,18 @@ public:
 
 
 
+
     void Print(); // Just print the number
 
 };
 
+int Complex::countNumbers = 0;
+
+//Overload <<
 std::ostream& operator << (std::ostream& os, const Complex a){
     os << "Complex number: " << a.re << " + i" << a.im << std::endl;
 }
+//Overload >>
 std::istream& operator >> (std::istream& in, Complex &a)
 {
     std::cout << "Enter real value : ";
@@ -476,4 +489,6 @@ int main()
    std::cout << b;
    std::cin >> a;
    std::cout << a;
+
+   Complex::ShowCountNumbers();
 }
