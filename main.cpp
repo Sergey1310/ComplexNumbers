@@ -236,7 +236,15 @@ public:
         }
         return ZERO;
     }
-
+    double operator [] (int index) const
+    {
+        if (index == 0) return re;
+        if (index == 1) return  im;
+        else {
+            std::cout << "Incorrect value!" << std::endl;
+        }
+        return ZERO;
+    }
 
 
 
